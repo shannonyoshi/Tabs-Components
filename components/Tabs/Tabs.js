@@ -1,64 +1,93 @@
+class Tabs {
+  constructor(links1) {
+
+    this.links = links1
+      //1. gets all 4 tab headers
+    links1.forEach((link, index) => {
+      const tabLink = new TabLink(link);
+      if (index ===0){
+        this.selectedTab = tabLink;
+      } //2. creates a new instance for each of the 4 headers
+    })
+  }
+  changeSelectedTab(newSelectedTab){
+    this.selectedTab.deselect();
+    this.selectedTab = newSelectedTab
+
+  }
+}
+
 
 class TabLink {
   constructor(element) {
-    this.element = element;
-    this.data = this.element.dataset.tab;
-    this.itemElement = document.querySelector(`.tabs-item[data-tab='${this.data}']`);
-    this.tabItem = new TabItem(this.itemElement);
-    this.element.addEventListener('click',() => this.select())
+    this.element = element;  //3. individual header
+    this.data = this.element.dataset.tab; //4. figures out which header this is
+    this.itemElement = document.querySelector(`.tabs-item[data-tab='${this.data}']`); //5. finds corresponding quote for this header
+    this.tabItem = new TabItem(this.itemElement); //6. makes new instance of quote for this header (see TabItem class)
+    this.element.addEventListener('click',() => this.select()) //7. when clicked, go to select
   };
 
   select() {
-    // Get all of the elements with the tabs-link class
-    const links = document.querySelectorAll('.tabs-link');
-console.log(links)
-    // Using a loop or the forEach method remove the 'tabs-link-selected' class from all of the links
-    links.forEach((link) => {
-      link.classList.remove('tabs-link-selected')
-    });
+    tabs.changeSelectedTab(this);
+    // const links = document.querySelectorAll('.tabs-link'); //8. gets all heading links 
+    // links.forEach((link) => {
+    //   link.classList.remove('tabs-link-selected')//9.removing this class changes background color of heading tab to red
+    // });
+    this.element.classList.add('tabs-link-selected') //10. makes this heading tab white
+    this.tabItem.select()//11. go to TabItem select()
 
-    // Add a class named "tabs-link-selected" to this link
-    this.element.classList.add('tabs-link-selected')
-    
-    this.tabItem.select()// Call the select method on the item associated with this link
-
+  }
+  deselect(){
+    this.element.classList.remove('tabs-link-selected')
+    this.tabItem.deselect()
   }
 }
 
 class TabItem {
   constructor(element) {
-    // Assign this.element to the passed in element
-    this.element = element;
+    this.element = element; //see 6.
   }
-
   select() {
-    // Select all ".tabs-item" elements from the DOM
-   const items = document.querySelectorAll('.tabs-item')
-    // Remove the class "tabs-item-selected" from each element
-    items.forEach((item) => {
-      item.classList.remove('tabs-item-selected')
-    })
-    // Add a class named "tabs-item-selected" to this element
-    this.element.classList.add('tabs-item-selected')
+  //  const items = document.querySelectorAll('.tabs-item') //12. gets all quotes
+  //   items.forEach((item) => {
+  //     item.classList.remove('tabs-item-selected') //13. removing 'tabs-item-selected' makes all quotes display:none
+  //   })
+    this.element.classList.add('tabs-item-selected') //14 changes this quote to display:block
+  }
+  deselect(){
+    this.element.classList.remove('tabs-item-selected')
   }
 }
 
-
 const links1 = document.querySelectorAll(".tabs-link");
-links1.forEach(link => {
-  new TabLink(link)
-})
-    // Assign this.element to the passed in DOM element
-    // Get the custom data attribute on the Link
-    // Using the custom data attribute get the associated Item element
-    // Using the Item element, create a new instance of the TabItem class
-// Add a click event listener on this instance, calling the select method on click
+const tabs = new Tabs(links1)
 
+class Carousel{
+  constructor(){
+    this.rightButton = document.querySelector("#right-button")
+    this.leftButton = document.querySelector("#left-button")
+    this. boxes = document.querySelectorAll(".box")
+    this.selectedBox = 0;
+    this.leftButton.addEventListener("click",()=>this.leftClick())
+    this.rightButton.addEventListener("click", ()=>this.rightClick())
 
+  }
+  leftClick(){
+    this.boxes[this.selectedBox].classList.remove("box-selected")
+    this.selectedBox--;
+    if(this.selectedBox <0){
+      this.selectedBox = this.boxes.length -1
+    }
+    this.boxes[this.selectedBox].classList.add('box-selected')
+  }
+  rightClick(){
+    this.boxes[this.selectedBox].classList.remove("box-selected")
+    this.selectedBox++;
+    if(this.selectedBox >this.boxes.length-1){
+      this.selectedBox = 0;
+    }
+    this.boxes[this.selectedBox].classList.add('box-selected')
+  }
+}
 
-
-/* START HERE: 
-- Select all classes named ".tabs-link" and assign that value to the links variable
-- With your selection in place, now chain a .forEach() method onto the links variable to iterate over the DOM NodeList
-- In your .forEach() method's callback function, return a new instance of TabLink and pass in each link as a parameter
-*/
+new Carousel();
